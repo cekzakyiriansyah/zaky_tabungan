@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tabungan Doll</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+  --bg:#FBF1F4; --surface:#FFFFFF; --ink:#3A1D31; --muted:#7D5D70;
+  --rose:#C93F6F; --rose-soft:#F6D9E3; --line:#EBC9D6; --done:#2F7D57; --done-bg:#DDF1E5; --on-rose:#FFFFFF;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#241220; --surface:#33192D; --ink:#F7E6EE; --muted:#C7A3B6;
+    --rose:#EE6C9A; --rose-soft:#4A2641; --line:#5A3350; --done:#7FD3A4; --done-bg:#1F4034; --on-rose:#2A0F1F;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#241220; --surface:#33192D; --ink:#F7E6EE; --muted:#C7A3B6;
+  --rose:#EE6C9A; --rose-soft:#4A2641; --line:#5A3350; --done:#7FD3A4; --done-bg:#1F4034; --on-rose:#2A0F1F;
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:400 16px/1.5 "Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1,h2{font-family:"Fraunces",Georgia,"Times New Roman",serif;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(1.9rem,6vw,2.6rem);font-weight:800;line-height:1.1}
+.sub{color:var(--muted);margin:6px 0 20px}
+
+.hero{display:grid;grid-template-columns:200px 1fr;gap:20px;background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:18px;align-items:center}
+.frame{position:relative;width:100%;aspect-ratio:3/4;border-radius:14px;overflow:hidden;background:var(--rose-soft);border:2px dashed var(--line);display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;padding:0;color:var(--rose);font:700 .95rem/1.3 "Nunito",sans-serif}
+.frame.has{border:0;box-shadow:0 0 0 6px var(--surface),0 0 0 7.5px var(--line)}
+.frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:filter .5s}
+.frame:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+.hint{font-size:.8rem;color:var(--muted);margin-top:8px}
+.big{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:clamp(2rem,7vw,3rem);line-height:1;color:var(--rose)}
+.of{color:var(--muted);margin:4px 0 14px}
+.bar{height:16px;border-radius:99px;background:var(--rose-soft);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--rose);border-radius:99px;transition:width .5s}
+.pct{display:flex;justify-content:space-between;font-weight:700;margin-top:6px;font-size:.9rem}
+.msg{margin-top:12px;font-weight:600}
+
+.settings{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:22px 0 8px}
+label{display:flex;flex-direction:column;font-size:.85rem;font-weight:700;color:var(--muted);gap:4px}
+input[type=number]{width:100%;font:600 1rem "Nunito",sans-serif;padding:9px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:6px 0 4px}
+.days label{align-items:stretch;text-align:center}
+.tgt{min-width:150px;flex:1}
+
+h2{font-size:1.3rem;margin:26px 0 10px}
+.week{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px;transition:background .3s,border-color .3s}
+.week.ok{background:var(--done-bg);border-color:var(--done)}
+.wh{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:baseline;margin-bottom:10px}
+.wh b{font-family:"Fraunces",Georgia,serif;font-size:1.1rem}
+.st{font-size:.85rem;font-weight:700;color:var(--muted)}
+.week.ok .st{color:var(--done)}
+.row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:700 .8rem "Nunito",sans-serif;cursor:pointer;min-height:58px}
+.day small{font-weight:600;color:var(--muted);font-size:.68rem}
+.day[aria-pressed="true"]{background:var(--rose);border-color:var(--rose);color:var(--on-rose)}
+.day[aria-pressed="true"] small{color:var(--on-rose)}
+.foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-top:20px;color:var(--muted);font-size:.85rem}
+.ghost{font:700 .85rem "Nunito",sans-serif;background:none;border:1.5px solid var(--line);color:var(--muted);padding:8px 14px;border-radius:99px;cursor:pointer}
+.note{font-size:.85rem;color:var(--muted);margin-top:18px}
+
+@media (max-width:560px){
+  .hero{grid-template-columns:1fr}
+  .frame{max-width:180px;margin:0 auto}
+  .day{min-height:54px;font-size:.72rem}
+  .day small{font-size:.62rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Tabungan doll</h1>
+  <p class="sub">Centang hari yang sudah kamu sisihkan sampai targetnya tercapai.</p>
+
+  <section class="hero" aria-label="Ringkasan tabungan">
+    <div>
+      <button class="frame" id="frame" type="button" aria-label="Pilih foto doll"></button>
+      <p class="hint" id="hint">Foto hanya tersimpan di perangkat ini.</p>
+      <input type="file" id="file" accept="image/*" hidden>
+    </div>
+    <div>
+      <div class="big" id="saved">Rp0</div>
+      <div class="of" id="of">dari target Rp500.000 · sisa Rp500.000</div>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="bar"><i id="fill"></i></div>
+      <div class="pct"><span id="pct">0%</span><span id="wk">0 dari 5 minggu tercapai</span></div>
+      <div class="msg" id="msg"></div>
+    </div>
+  </section>
+
+  <section class="settings" aria-label="Pengaturan">
+    <label class="tgt">Target total (Rp)
+      <input type="number" id="target" min="0" step="10000" inputmode="numeric">
+    </label>
+  </section>
+  <p class="sub" style="margin:8px 0 4px;font-weight:700">Nominal nabung per hari (Rp)</p>
+  <div class="days" id="amts"></div>
+
+  <h2>Catatan mingguan</h2>
+  <div id="weeks"></div>
+
+  <div class="foot">
+    <span>Rencana: Rp110.000/minggu = Rp100.000 tabungan + Rp10.000 buffer tunai.</span>
+    <button class="ghost" id="reset" type="button">Reset catatan</button>
+  </div>
+  <p class="note">Halaman ini hanya pencatat. Uang aslinya tetap di celengan atau kantong bank digital, jadi samakan angkanya. Data tersimpan di browser perangkat ini saja.</p>
+</main>
+
+<script>
+(function(){
+  var DAYS=["Sen","Sel","Rab","Kam","Jum","Sab","Min"];
+  var KEY="tabungan-doll-v1";
+  var def=function(){return{target:500000,amts:[15000,15000,15000,15000,15000,15000,10000],weeks:[0,1,2,3,4].map(function(){return[0,0,0,0,0,0,0]}),photo:""}};
+  var S=def();
+  try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&p.amts&&p.weeks)S=Object.assign(def(),p)}}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+  function rp(n){return"Rp"+Math.round(n).toLocaleString("id-ID")}
+  var $=function(id){return document.getElementById(id)};
+
+  function weekSum(w){return S.weeks[w].reduce(function(a,v,i){return a+(v?Number(S.amts[i])||0:0)},0)}
+  function weekTarget(){return S.amts.reduce(function(a,v){return a+(Number(v)||0)},0)}
+
+  function buildAmts(){
+    var box=$("amts");box.innerHTML="";
+    DAYS.forEach(function(d,i){
+      var l=document.createElement("label");l.textContent=d;
+      var inp=document.createElement("input");inp.type="number";inp.min="0";inp.step="1000";inp.inputMode="numeric";inp.value=S.amts[i];
+      inp.setAttribute("aria-label","Nominal hari "+d);
+      inp.addEventListener("input",function(){S.amts[i]=Math.max(0,Number(inp.value)||0);save();render()});
+      l.appendChild(inp);box.appendChild(l);
+    });
+  }
+
+  function render(){
+    var total=0,ok=0,wt=weekTarget();
+    var wbox=$("weeks");wbox.innerHTML="";
+    for(let w=0;w<5;w++){
+      var sum=weekSum(w);total+=sum;
+      var done=wt>0&&sum>=wt;if(done)ok++;
+      var card=document.createElement("div");card.className="week"+(done?" ok":"");
+      var head=document.createElement("div");head.className="wh";
+      head.innerHTML="<b>Minggu "+(w+1)+"</b><span class=\"st\">"+rp(sum)+" / "+rp(wt)+" · "+(done?"Tercapai":sum>0?"Berjalan":"Belum mulai")+"</span>";
+      var row=document.createElement("div");row.className="row";
+      DAYS.forEach(function(d,i){
+        var b=document.createElement("button");b.type="button";b.className="day";
+        b.setAttribute("aria-pressed",S.weeks[w][i]?"true":"false");
+        b.setAttribute("aria-label",d+" minggu "+(w+1)+", "+rp(S.amts[i]));
+        b.innerHTML=(S.weeks[w][i]?"✔":d)+"<small>"+((Number(S.amts[i])||0)/1000)+"rb</small>";
+        b.addEventListener("click",function(){S.weeks[w][i]=S.weeks[w][i]?0:1;save();render()});
+        row.appendChild(b);
+      });
+      card.appendChild(head);card.appendChild(row);wbox.appendChild(card);
+    }
+    var tg=Number(S.target)||0;
+    var ratio=tg>0?Math.min(total/tg,1):0;
+    $("saved").textContent=rp(total);
+    $("of").textContent="dari target "+rp(tg)+" · sisa "+rp(Math.max(tg-total,0));
+    $("fill").style.width=(ratio*100)+"%";
+    $("bar").setAttribute("aria-valuenow",Math.round(ratio*100));
+    $("pct").textContent=Math.round(ratio*100)+"%";
+    $("wk").textContent=ok+" dari 5 minggu tercapai";
+    $("msg").textContent=ratio>=1?"Target tercapai! Saatnya beli doll-nya 🎀":ratio>=.5?"Sudah lebih dari separuh jalan, lanjut ya!":total>0?"Awal yang bagus. Satu hari lagi, satu langkah lagi.":"Mulai dari hari ini. Rp15.000 saja sudah cukup.";
+    var img=$("frame").querySelector("img");
+    if(img)img.style.filter="none";
+    if(document.activeElement!==$("target"))$("target").value=tg;
+  }
+
+  function drawPhoto(){
+    var f=$("frame");f.innerHTML="";
+    if(S.photo){
+      f.className="frame has";
+      var im=document.createElement("img");im.onerror=function(){S.photo="";save();drawPhoto()};im.src=S.photo;im.alt="Foto doll incaran";f.appendChild(im);
+      $("hint").textContent="Ketuk foto untuk menggantinya.";
+    }else{
+      f.className="frame";f.textContent="Tambah foto doll incaranmu";
+      $("hint").textContent="Foto hanya tersimpan di perangkat ini.";
+    }
+  }
+
+  $("frame").addEventListener("click",function(){$("file").click()});
+  $("file").addEventListener("change",function(e){
+    var file=e.target.files&&e.target.files[0];if(!file)return;
+    var rd=new FileReader();
+    rd.onload=function(){
+      var im=new Image();
+      im.onload=function(){
+        var max=480,sc=Math.min(1,max/Math.max(im.width,im.height));
+        var c=document.createElement("canvas");c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);
+        c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+        S.photo=c.toDataURL("image/jpeg",.82);save();drawPhoto();render();
+      };
+      im.src=rd.result;
+    };
+    rd.readAsDataURL(file);
+  });
+  $("target").addEventListener("input",function(){S.target=Math.max(0,Number($("target").value)||0);save();render()});
+  var armed=false,t;
+  $("reset").addEventListener("click",function(){
+    var b=$("reset");
+    if(!armed){armed=true;b.textContent="Ketuk lagi untuk hapus centang";t=setTimeout(function(){armed=false;b.textContent="Reset catatan"},3500);return}
+    clearTimeout(t);armed=false;b.textContent="Reset catatan";
+    S.weeks=def().weeks;save();render();
+  });
+
+  buildAmts();drawPhoto();render();
+})();
+</script>
+</body>
+</html>
